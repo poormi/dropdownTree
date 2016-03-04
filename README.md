@@ -1,3 +1,4 @@
 # dropdownTree
-dropdown tree multiselected
-modified the file 'bootstrap-treeview.js' which download from the net 
+the file 'bootstrap-treeview.js' download from the net 
+modified a bit
+
