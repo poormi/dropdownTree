@@ -1,0 +1,140 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<!-- Required Stylesheets -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	 
+	<!-- Required Javascript -->
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap-treeview.js"></script>  
+	<title>Document</title>
+</head>
+<body>
+	<input type="input" class="form-control" id="input-select-node" placeholder="Identify node..." value="">
+	<div id="tree"></div>
+</body>
+<script type="text/javascript">
+	 var defaultData = [
+          {
+            text: 'Parent 1',
+            href: '#parent1',
+            tags: ['4'],
+            nodes: [
+              {
+                text: 'Child 1',
+                href: '#child1',
+                tags: ['2'],
+                nodes: [
+                  {
+                    text: 'Grandchild 1',
+                    href: '#grandchild1',
+                    tags: ['0']
+                  },
+                  {
+                    text: 'Grandchild 2',
+                    href: '#grandchild2',
+                    tags: ['0']
+                  }
+                ]
+              },
+              {
+                text: 'Child 2',
+                href: '#child2',
+                tags: ['0']
+              }
+            ]
+          },
+          {
+            text: 'Parent 2',
+            href: '#parent2',
+            tags: ['0']
+          },
+          {
+            text: 'Parent 3',
+            href: '#parent3',
+             tags: ['0']
+          },
+          {
+            text: 'Parent 4',
+            href: '#parent4',
+            tags: ['0']
+          },
+          {
+            text: 'Parent 5',
+            href: '#parent5'  ,
+            tags: ['0']
+          }],
+      $selectableTree = (function(){
+      	return $("#tree").treeview({
+	     	data:defaultData,
+	     	multiSelect: true,
+	     	onNodeSelected: function(event, node) {
+	          inputSelected(node,true);
+	        },
+	        onNodeUnselected: function (event, node) {
+	          inputSelected(node,false);
+	        }
+     })
+      })(),
+      	//查找选中节点
+      	findSelectableNodes = function() {
+        	return $selectableTree.treeview('search', [ $('#input-select-node').val(), { ignoreCase: false, exactMatch: false } ]);
+        },
+        //设置文本框选中内容
+        inputSelected = function(node,toggle){
+        	var _split=',',_oldV = _newV = [];
+        	if($('#input-select-node').val().trim()!="") 
+        		_oldV = _newV = $('#input-select-node').val().trim().trimEnd(_split).split(_split);
+        	if(_index = _oldV.indexOf(node.text),_index >= 0){
+				if(!toggle){
+	        		$.each(_oldV,function(i,val){
+	        			if (i == _index) {
+	        				_newV.splice(i,1);
+	        			};
+	        		});
+	        	}
+        	}else {
+        		toggle && _newV.push(node.text.trim());
+        	}
+        	console.log(_newV);
+        	$('#input-select-node').val(_newV.join(_split));
+        },
+        checkInput = function(){
+        	var _arr = $('#input-select-node').val().trim().split(','),_result = [],
+        		_selectedNodes = $selectableTree.treeview('getSelected');
+        		$.each(_selectedNodes,function(i,_node){
+        			var _index = _arr.indexOf(_node.text);
+        			if (_index >=0) {
+        				_result.push(_node.text);
+        			};
+        		});
+        		return _result.join(",");
+        };
+        var selectableNodes = findSelectableNodes();
+        $('#input-select-node').on('focus', function (e) {
+        	$("#tree").show();     	
+        });
+        $('#input-select-node').on('keyup',function (argument) {
+        	selectableNodes = findSelectableNodes();   
+        });
+        $('#input-select-node').on('keydown', function (e) {
+        	if(e.which == 13){
+        		/*取消选中节点*/
+        		var _selectedNodes = $selectableTree.treeview('getSelected');
+        		$.each(_selectedNodes,function(i,_node){
+        			var _index = selectableNodes.indexOf(_node);
+        			if(_index == -1 ){
+        				$selectableTree.treeview('unselectNode',[_node]);
+        			}else{
+        				selectableNodes.splice(_index,1);
+        			}
+        		});
+        		if(selectableNodes.length > 0)
+    				$selectableTree.treeview('selectNode',[selectableNodes,{}]) 
+    			$('#input-select-node').val(checkInput());
+        		$("#tree").hide();
+        		$("#input-select-node").blur();
+        	}        	
+        });
+</script>
+</html>
