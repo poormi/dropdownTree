@@ -1,5 +1,4 @@
 # dropdownTree
-the file 'bootstrap-treeview.js' download from the net .
+The 'bootstrap-treeview.js' had modified to be a dropdown tree and others which download from the network.
 
-modified a bit
-
+ 
